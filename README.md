@@ -171,36 +171,6 @@ El botón **"+ Nuevo Evento"** también se muestra únicamente cuando el usuario
 
 ---
 
-# 📝 Preguntas Frecuentes y Justificaciones Técnicas (Requerimientos de Entrega)
-
-### 1. ⚙️ Cómo correr el proyecto localmente
-```bash
-# 1. Instalar dependencias
-npm install
-
-# 2. Iniciar el servidor de desarrollo
-npm run dev
-
-# 3. Ejecutar las pruebas automatizadas
-npm test
-
-# 4. Compilar para producción (TypeScript + Vite)
-npm run build
-```
-
-### 2. 🔐 Dónde guardaste el token de sesión (localStorage vs sessionStorage) y por qué
-- **Opción elegida:** `localStorage` (clave `'accessToken'`).
-- **Justificación:** Se eligió `localStorage` para garantizar la **persistencia de la sesión del usuario** incluso si recarga la página o abre la aplicación en una nueva pestaña del mismo navegador. Esto evita exigir al usuario iniciar sesión constantemente en cada recarga o en pestañas simultáneas. Cuando el usuario presiona "Cerrar sesión", el `AuthContext` limpia de forma segura el almacenamiento local mediante `localStorage.removeItem('accessToken')` y ejecuta la petición al servidor `POST /auth/logout`.
-
-### 3. 🌐 Qué librería usaste para las peticiones HTTP y cómo resolviste el interceptor de autenticación
-- **Librería utilizada:** `Axios`.
-- **Implementación del Interceptor:**
-  - Se configuró una instancia personalizada en `src/feature/lib/axiosClient.ts`.
-  - **Interceptor de Petición (Request Interceptor):** Revisa si existe un `accessToken` en `localStorage` antes de enviar cualquier solicitud y lo adjunta en los encabezados HTTP como `Authorization: Bearer <token>`.
-  - **Interceptor de Respuesta (Response Interceptor):** Escucha las respuestas de la API. Si el backend responde con un estado de error `401 Unauthorized` (token expirado o inválido), el interceptor dispara un evento global `auth-logout` que desloguea automáticamente al usuario en `AuthContext` y limpia la sesión local sin romper la experiencia del cliente.
-
----
-
 # 🌐 Comunicación con la API
 
 La comunicación con el backend se centraliza mediante una instancia personalizada de Axios:
